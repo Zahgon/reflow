@@ -3,7 +3,6 @@ package ansi
 import (
 	"bytes"
 	"io"
-	"unicode/utf8"
 )
 
 type Writer struct {
@@ -17,60 +16,20 @@ type Writer struct {
 }
 
 // Write is used to write content to the ANSI buffer.
-func (w *Writer) Write(b []byte) (int, error) {
-	for _, c := range string(b) {
-		if c == Marker {
-			// ANSI escape sequence
-			w.ansi = true
-			w.seqchanged = true
-			_, _ = w.ansiseq.WriteRune(c)
-		} else if w.ansi {
-			_, _ = w.ansiseq.WriteRune(c)
-			if IsTerminator(c) {
-				// ANSI sequence terminated
-				w.ansi = false
+func (w *Writer) Write(b []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
-				if bytes.HasSuffix(w.ansiseq.Bytes(), []byte("[0m")) {
-					// reset sequence
-					w.lastseq.Reset()
-					w.seqchanged = false
-				} else if c == 'm' {
-					// color code
-					_, _ = w.lastseq.Write(w.ansiseq.Bytes())
-				}
+// ANSI escape sequence
 
-				_, _ = w.ansiseq.WriteTo(w.Forward)
-			}
-		} else {
-			_, err := w.writeRune(c)
-			if err != nil {
-				return 0, err
-			}
-		}
-	}
+// ANSI sequence terminated
 
-	return len(b), nil
-}
+// reset sequence
 
-func (w *Writer) writeRune(r rune) (int, error) {
-	if w.runeBuf == nil {
-		w.runeBuf = make([]byte, utf8.UTFMax)
-	}
-	n := utf8.EncodeRune(w.runeBuf, r)
-	return w.Forward.Write(w.runeBuf[:n])
-}
+// color code
 
-func (w *Writer) LastSequence() string {
-	return w.lastseq.String()
-}
+func (w *Writer) writeRune(r rune) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (w *Writer) ResetAnsi() {
-	if !w.seqchanged {
-		return
-	}
-	_, _ = w.Forward.Write([]byte("\x1b[0m"))
-}
+func (w *Writer) LastSequence() string { _ = "STUB: not implemented"; return "" }
 
-func (w *Writer) RestoreAnsi() {
-	_, _ = w.Forward.Write(w.lastseq.Bytes())
-}
+func (w *Writer) ResetAnsi() { _ = "STUB: not implemented"; return }
+
+func (w *Writer) RestoreAnsi() { _ = "STUB: not implemented"; return }
